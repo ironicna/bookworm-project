@@ -75,7 +75,7 @@ function AddBookPage(props) {
         }
 
         const variables = {
-            seller: props.user.userData._id,
+            writer: props.user.userData._id,
             title: TitleValue,
             authorsNo: AuthorsNoValue,
             author: AuthorValue,
