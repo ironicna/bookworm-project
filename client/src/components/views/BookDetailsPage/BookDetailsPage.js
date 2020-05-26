@@ -3,12 +3,14 @@ import Axios from 'axios';
 import { Row, Col } from 'antd';
 import BookImage from './Sections/BookImage';
 import BookInfo from './Sections/BookInfo';
+import { addToCart } from '../../../_actions/user_actions';
+import { useDispatch } from 'react-redux';
 
 function BookDetailsPage(props) {
     
     const bookId = props.match.params.bookId
     const [Book, setBook] = useState([])
-    // const dispatch = useDispatch();
+    const dispatch = useDispatch();
 
     useEffect(() => {
        Axios.get(`/api/book/books_by_id?id=${bookId}$type=single`)
@@ -17,9 +19,9 @@ function BookDetailsPage(props) {
             })
     }, [])
 
-    // const addToCartHandler = (bookId) => {
-    //    dispatch(addToCart(bookId))
-    // }
+    const addToCartHandler = (bookId) => {
+       dispatch(addToCart(bookId))
+    }
 
     return (
         <div className="postPage" style={{ width: '100%', padding: '3rem 4rem' }}>
@@ -36,7 +38,7 @@ function BookDetailsPage(props) {
                 </Col>
                 <Col lg={12} xs={24}>
                     <BookInfo
-                        // addToCart={addToCartHandler}
+                        addToCart={addToCartHandler}
                         detail={Book} />
                 </Col>
             </Row>
