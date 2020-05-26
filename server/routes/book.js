@@ -85,4 +85,29 @@ router.post("/getBooks", (req, res) => {
     }
 });
 
+router.get("/books_by_id", (req, res) => {
+    let type = req.query.type
+    let bookIds = req.query.id
+
+    console.log("req.query.id", req.query.id)
+
+    if (type === "array") {
+        let ids = req.query.id.split(',');
+        bookIds = [];
+        bookIds = ids.map(item => {
+            return item
+        })
+    }
+
+    console.log("bookIds", bookIds)
+
+    // Find the book details that match book ID
+    Book.find({ '_id': { $in: bookIds } })
+        .populate('writer')
+        .exec((err, book) => {
+            if (err) return res.status(400).send(err)
+            return res.status(200).send(book)
+        })
+});
+
 module.exports = router;
