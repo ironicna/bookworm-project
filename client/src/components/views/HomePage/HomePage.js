@@ -23,7 +23,7 @@ function HomePage() {
     useEffect(() => {
         const variables = {
             skip: Skip,
-            limit: Limit
+            limit: Limit,
         }
 
         getBooks(variables)
@@ -32,7 +32,7 @@ function HomePage() {
     
     const getBooks = (variables) => {
         Axios.post('/api/book/getBooks', variables)
-            .then(response => {
+             .then(response => {
                 if(response.data.success) {
                     if(variables.loadMore) {
                         setBooks([...Books, ...response.data.books])
@@ -53,7 +53,8 @@ function HomePage() {
             skip: skip,
             limit: Limit,
             loadMore: true,
-            filters: Filters
+            filters: Filters,
+            searchTerm: SearchTerms
         }
         getBooks(variables)
         setSkip(skip)
@@ -61,13 +62,13 @@ function HomePage() {
 
     const renderCards = Books.map((book, index) => {
 
-        return <Col lg={6} md={8} xs={24}>
+        return <Col lg={6} md={8} xs={24} style={{ background: '#A9A9A9', padding: '30px' }}>
             <Card
                 hoverable={true}
                 cover={<a href={`/book/${book._id}`} > <ImageSlider images={book.images} /></a>}
             >
                 <Meta
-                    title={book.title}
+                    title={`${book.title} - ${book.author}`}
                     description={`${book.price} KM`}
                 />
             </Card>
@@ -120,20 +121,17 @@ function HomePage() {
                 <hr></hr>
             </div>
 
-            {/*Searching */}
             <div style={{ width:'75%', margin: '2rem auto' }}>
                 <SearchFeature
                     refreshFunction={updateSearchTerms}
                 />
             </div>
 
-
-            {/*Filtering*/}
             <CheckBox
                 list = { categories }
                 handleFilters = {filters => handleFilters(filters, "categories")}
             />
-
+            <br></br>
             {Books.length === 0 ?
                 <div style={{ display: 'flex', height: '300px', justifyContent: 'center', alignItems: 'center' }}>
                     <h2>No books yet...</h2>
