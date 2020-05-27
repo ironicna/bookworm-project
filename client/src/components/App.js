@@ -9,6 +9,7 @@ import NavBar from "./views/NavBar/NavBar";
 import Footer from "./views/Footer/Footer"
 import AddBookPage from './views/AddBookPage/AddBookPage.js';
 import ShoppingCartPage from './views/ShoppingCartPage/ShoppingCartPage.js';
+import EditBookPage from './views/EditBookPage/EditBookPage.js';
 import BookDetailsPage from './views/BookDetailsPage/BookDetailsPage.js';
 
 //null   Anyone Can go inside
@@ -25,6 +26,7 @@ function App() {
           <Route exact path="/login" component={Auth(LoginPage, false)} />
           <Route exact path="/register" component={Auth(RegisterPage, false)} />
           <Route exact path="/book/add" component={Auth(AddBookPage, true)} />
+          <Route exact path="/book/edit" component={Auth(EditBookPage, true)}/>
           <Route exact path="/cart" component={Auth(ShoppingCartPage, true)} />
           <Route exact path="/book/:bookId" component={Auth(BookDetailsPage, null)} />
         </Switch>
