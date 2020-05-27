@@ -4,6 +4,13 @@ import {
     REGISTER_USER,
     AUTH_USER,
     LOGOUT_USER,
+<<<<<<< Updated upstream
+=======
+    ADD_TO_CART_USER,
+    GET_CART_ITEMS_USER,
+    REMOVE_CART_ITEMS_USER
+
+>>>>>>> Stashed changes
 } from './types';
 import { USER_SERVER } from '../components/Config.js';
 
@@ -47,3 +54,56 @@ export function logoutUser(){
     }
 }
 
+<<<<<<< Updated upstream
+=======
+export function addToCart(_id){
+    const request = axios.post(`${USER_SERVER}/addToCart?bookId=${_id}`)
+    .then(response => response.data);
+
+    return {
+        type: ADD_TO_CART_USER,
+        payload: request
+    }
+}
+
+export function getCartItems(cartItems, userCart){
+    const request = axios.get(`/api/book/books_by_id?id=${cartItems}&type=array`)
+    .then(response => {
+
+    //Make CartDetail in redux store to add the quantity data using also the Book collection
+
+    userCart.forEach(cartItem => {
+        response.data.forEach((bookDetail,i) => {
+            if(cartItem.id===bookDetail._id){
+            response.data[i].quantity = cartItem.quantity;   //getting the quantity data
+            }
+        })
+    })
+    return response.data;
+});
+    return {
+        type: GET_CART_ITEMS_USER,
+        payload: request
+    }
+}
+
+export function removeCartItem(id){
+    const request = axios.get(`/api/users/removeFromCart?_id=${id}`)
+    .then(response => {
+        response.data.cart.forEach(item => {
+            response.data.cart.forEach((k,i) => {
+                if (item.id === k.id){
+                    response.data.cartDetail[i].quantity = item.quantity
+                }
+            })
+
+        })
+
+    return response.data;
+});
+    return {
+        type: REMOVE_CART_ITEMS_USER,
+        payload: request
+    }
+}
+>>>>>>> Stashed changes
