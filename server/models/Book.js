@@ -53,6 +53,16 @@ const bookSchema = mongoose.Schema({
     },
 }, { timestamps: true })
 
+bookSchema.index({
+    title: 'text',
+    author: 'text',
+}, {
+    weights: {
+        title: 5,
+        author: 1,
+    }
+})
+
 const Book = mongoose.model('Book', bookSchema);
 
 module.exports = { Book }
