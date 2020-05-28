@@ -1,0 +1,13 @@
+
+--------- Installing patypal dependency -------
+
+npm install --save react-paypal-express-checkout
+
+--------- Using an account for payment ---------
+
+User credentials for logging in and paying in the paypal sandbox :
+
+Username: sb-udfhq1922469@personal.example.com
+Password: P0m5HNp>
+
+Sample credit cards show up  -> click any (visa for example)  -> checkout  -> completed payment

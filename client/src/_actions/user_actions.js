@@ -4,13 +4,12 @@ import {
     REGISTER_USER,
     AUTH_USER,
     LOGOUT_USER,
-<<<<<<< Updated upstream
-=======
     ADD_TO_CART_USER,
     GET_CART_ITEMS_USER,
-    REMOVE_CART_ITEMS_USER
+    REMOVE_CART_ITEMS_USER,
+    ON_SUCCESS_BUY_USER
 
->>>>>>> Stashed changes
+
 } from './types';
 import { USER_SERVER } from '../components/Config.js';
 
@@ -54,8 +53,6 @@ export function logoutUser(){
     }
 }
 
-<<<<<<< Updated upstream
-=======
 export function addToCart(_id){
     const request = axios.post(`${USER_SERVER}/addToCart?bookId=${_id}`)
     .then(response => response.data);
@@ -92,7 +89,7 @@ export function removeCartItem(id){
     .then(response => {
         response.data.cart.forEach(item => {
             response.data.cart.forEach((k,i) => {
-                if (item.id === k.id){
+                if (item.id === k._id){
                     response.data.cartDetail[i].quantity = item.quantity
                 }
             })
@@ -106,4 +103,13 @@ export function removeCartItem(id){
         payload: request
     }
 }
->>>>>>> Stashed changes
+
+export function onSuccessBuy(data){
+    const request = axios.post(`${USER_SERVER}/successBuy`, data)	
+    .then(response => response.data);
+    return{
+        type: ON_SUCCESS_BUY_USER,
+        payload: data
+    }
+}
+

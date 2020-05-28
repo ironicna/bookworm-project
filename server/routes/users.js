@@ -2,8 +2,8 @@ const express = require('express');
 const router = express.Router();
 const { User } = require("../models/User");
 const { Book } = require ("../models/Book");
-
 const { auth } = require("../middleware/auth");
+const {Payment } = require("../models/Payment");
 
 //=================================
 //             User
@@ -73,10 +73,8 @@ router.get("/logout", auth, (req, res) => {
     });
 });
 
-<<<<<<< Updated upstream
-=======
 //add to cart POST request by the registered user
-router.post('/addToCart', auth, (req, res) => {
+router.get('/addToCart', auth, (req, res) => {
 
     User.findOne({ _id: req.user._id }, (err, userInfo) => {
         let duplicate = false;
@@ -170,5 +168,52 @@ router.get('/removeFromCart', auth, (req, res) => {
 })
 */
 
->>>>>>> Stashed changes
+router.post('/successBuy', auth, (req, res) => {
+    let history = [];
+    let transactionData = {};
+
+    //putting part of the payment data into the user collection
+    req.body.cartDetail.forEach((item) => {
+        history.push({
+            dateOfPurchase: Date.now(),
+            name: item.title,
+            id: item._id,
+            price: item.price,
+            quantity: item.quantity,
+            paymentId: req.body.paymentData.paymentID
+        })
+    })
+
+    //Putting payment information from Paypal into the Payment collection
+    transactionData.user = {
+        id: req.user._id,
+        name: req.user.name,
+        lastname: req.user.lastname,
+        email: req.user.email
+
+    }
+
+    transactionData.data = req.body.paymentData;
+    transactionData.book = history
+
+    User.findOneAndUpdate(
+        {_id: req.user._id},
+        {$push: {history: history}, $set: {cart: []}},
+        {new : true},
+        (err, user) => {
+            if(err) return res.json({ success: false, err});
+            
+            const payment = new Payment(transactionData)
+            payment.save((err, doc)=> {
+                if(err) return res.json({success: false, err})
+            
+
+            //TODO - count number of sold items for each book by payment id and book id    
+            })
+        }
+    )
+})
+
+
+
 module.exports = router;

@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import {useDispatch } from 'react-redux'
-import {getCartItems, removeCartItem} from '../../../_actions/user_actions';
+import {getCartItems, removeCartItem, onSuccessBuy} from '../../../_actions/user_actions';
 import UserCardBlock from './Sections/UserCardBlock';
 import { Result, Empty } from 'antd';
+import Paypal from '../../utils/Paypal';
+import Axios from 'axios';
+import { response } from 'express';
 
 function ShoppingCartPage(props) {
     const dispatch = useDispatch();
@@ -20,7 +23,11 @@ function ShoppingCartPage(props) {
                   
               });  
             dispatch(getCartItems(cartItems, props.user.userData.cart)) //to show on Redux the cart information we use dispatch
-
+              .then((response) => {
+                  if(response.payload.length > 0){
+                      calculateTotal(response.payload)
+                  }
+              })
             }
         }
 
@@ -70,7 +77,34 @@ function ShoppingCartPage(props) {
         })
     }
 
-    
+    const transactionSuccess = (data) => {
+        let variables = {
+            cartDetail: props.user.cartDetail, paymentData: data
+        }
+        Axios.post('/api/users/successBuy', variables)
+        .then(response => {
+            if(response.data.success){
+                setShowSuccess(true)
+                setShowTotal(false)
+
+                dispatch(onSuccessBuy({
+                    cart: response.data.cart,
+                    cartDetail: response.data.cartDetail
+                }))
+            }else{
+                alert('Failed to complete order')
+            }
+        })
+    }
+    const transactionError = () => {
+        console.log('Paypal error')
+    }
+    const transactionCanceled = () => {
+        console.log('Transanction canceled.')
+
+    }
+
+
     return (
         <div style={{width: '85%', margin: '3rem auto'}}>
             <h1>My Cart</h1>
@@ -79,9 +113,6 @@ function ShoppingCartPage(props) {
                 books={props.user.cartDetail}
             
             />
-
-           
-
         {ShowTotal? 
          <div style={{marginTop:'3rem' }}>
          <h2>Total amount: ${Total} </h2>
@@ -98,7 +129,16 @@ function ShoppingCartPage(props) {
             <p>No items in the cart</p>
           </div>
         }       
-        </div>            
+        </div>   
+        {ShowTotal && 
+            <Paypal
+            toPay = {Total}
+            onSuccess = {transactionSuccess}
+            transactionError = {transactionError}
+            transactionCanceled = {transactionCanceled}
+        />
+        }
+
         </div>
     )
 }
