@@ -1,4 +1,4 @@
-import React, { useState }from 'react'
+import React, { useState } from 'react'
 import { Checkbox, Collapse } from 'antd';
 
 const { Panel } = Collapse
@@ -22,8 +22,22 @@ function CheckBox(props) {
         props.handleFilters(newChecked)
 
     } 
-    
-    const renderCheckboxLists = () => props.list && props.list.map((value, index) => (
+    const handleToggleNew = (value) => {
+
+        const currentIndex = Checked.indexOf(value);
+        const newChecked = [...Checked];
+
+        if (currentIndex === -1) {
+            newChecked.push(value)
+        } else {
+            newChecked.splice(currentIndex, 1)
+        }
+
+        setChecked(newChecked)
+        props.handleStates(newChecked)
+
+    } 
+        const renderCheckboxLists = () => props.list && props.list.map((value, index) => (
         <React.Fragment key={index}>
             <Checkbox
                 onChange={() => handleToggle(value._id)}
@@ -33,13 +47,29 @@ function CheckBox(props) {
             <span>{value.name}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         </React.Fragment>
     ))   
-
+    const renderCheckboxListica = () => props.listica && props.listica.map((value, index) => (
+        <React.Fragment key={index}>
+            <Checkbox
+                onChange={() => handleToggleNew(value._id)}
+                type="checkbox"
+                checked={Checked.indexOf(value._id) === -1 ? false : true}
+            />&nbsp;&nbsp;
+            <span>{value.name}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        </React.Fragment>
+    )) 
     return (
         <div>
             <Collapse defaultActiveKey={['0']} >
-                <Panel header="Filter" key="1">
+                <Panel header="Categories" key="1">
 
                     {renderCheckboxLists()}
+
+                </Panel>
+            </Collapse>
+            <Collapse>
+                <Panel header="State of Book" key="1">
+
+                    {renderCheckboxListica()}
 
                 </Panel>
             </Collapse>

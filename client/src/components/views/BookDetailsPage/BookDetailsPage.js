@@ -8,9 +8,9 @@ import { useDispatch } from 'react-redux';
 
 function BookDetailsPage(props) {
     
+    const dispatch = useDispatch();
     const bookId = props.match.params.bookId
     const [Book, setBook] = useState([])
-    const dispatch = useDispatch();
 
     useEffect(() => {
        Axios.get(`/api/book/books_by_id?id=${bookId}$type=single`)

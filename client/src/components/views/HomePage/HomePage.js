@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, createFactory } from 'react'
 import Axios from 'axios';
 import { Col, Card, Row } from 'antd';
 import ImageSlider from '../../utils/ImageSlider';
 import CheckBox from './Sections/CheckBox';
-import { categories } from './Sections/Data';
+import { genre, stateOfBook } from './Sections/Data';
 import SearchFeature from './Sections/SearchFeature';
 
 const { Meta } = Card;
@@ -16,11 +16,12 @@ function HomePage() {
     const [PostSize, setPostSize] = useState()
     const [SearchTerms, setSearchTerms] = useState("")
     const [Filters, setFilters] = useState({
-        categories: []
-
+        genre: [],
+        stateOfBook: []
     })
 
     useEffect(() => {
+        
         const variables = {
             skip: Skip,
             limit: Limit,
@@ -86,12 +87,23 @@ function HomePage() {
         setSkip(0)
     }
 
-    const handleFilters = (filters, category) => {
+    const handleStates = (filters, category) => {
 
         const newFilters = { ...Filters }
 
         newFilters[category] = filters
 
+        console.log(newFilters)
+
+        showFilteredResults(newFilters)
+        setFilters(newFilters)
+    }
+
+    const handleFilters = (filters, category) => {
+
+        const newFilters = { ...Filters }
+
+        newFilters[category] = filters
 
         console.log(newFilters)
 
@@ -121,16 +133,19 @@ function HomePage() {
                 <hr></hr>
             </div>
 
-            <div style={{ width:'75%', margin: '2rem auto' }}>
+            <div style={{ width:'75%', margin: '3rem auto' }}>
                 <SearchFeature
                     refreshFunction={updateSearchTerms}
                 />
             </div>
-
             <CheckBox
-                list = { categories }
-                handleFilters = {filters => handleFilters(filters, "categories")}
-            />
+                list={genre}
+                handleFilters={filters => handleFilters(filters, "genre")}
+                listica={stateOfBook}
+                handleStates={filters => handleStates(filters, "stateOfBook")}
+            />                 
+
+
             <br></br>
             {Books.length === 0 ?
                 <div style={{ display: 'flex', height: '300px', justifyContent: 'center', alignItems: 'center' }}>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState} from 'react'
+import React, { useEffect, useState } from 'react'
 import ImageGallery from 'react-image-gallery';
 
 function BookImage(props) {

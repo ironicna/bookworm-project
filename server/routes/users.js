@@ -1,8 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const { User } = require("../models/User");
-
+const { Book } = require ("../models/Book");
 const { auth } = require("../middleware/auth");
+const { Payment } = require("../models/Payment");
 
 //=================================
 //             User
@@ -19,6 +20,8 @@ router.get("/auth", auth, (req, res) => {
         lastname: req.user.lastname,
         role: req.user.role,
         image: req.user.image,
+        cart: req.user.cart,
+        history: req.user.history
     });
 });
 
@@ -69,13 +72,14 @@ router.get("/logout", auth, (req, res) => {
     });
 });
 
+//add to cart POST request by the registered user
 router.get('/addToCart', auth, (req, res) => {
 
     User.findOne({ _id: req.user._id }, (err, userInfo) => {
         let duplicate = false;
 
         console.log(userInfo)
-
+//If same item is added again to the cart only quantity increases of that particular item increses not quantity of cart contents
         userInfo.cart.forEach((item) => {
             if (item.id == req.query.bookId) {
                 duplicate = true;
@@ -86,8 +90,8 @@ router.get('/addToCart', auth, (req, res) => {
         if (duplicate) {
             User.findOneAndUpdate(
                 { _id: req.user._id, "cart.id": req.query.bookId },
-                { $inc: { "cart.$.quantity": 1 } },
-                { new: true },
+                { $inc: { "cart.$.quantity": 1 } },      //increase quantity of same item
+                { new: true },              //new set to true to return document after update
                 (err, userInfo) => {
                     if (err) return res.json({ success: false, err });
                     res.status(200).json(userInfo.cart)
@@ -114,5 +118,98 @@ router.get('/addToCart', auth, (req, res) => {
         }
     })
 });
+
+router.get('/removeFromCart', auth, (req, res) => {
+    User.findOneAndUpdate(
+        {_id: req.user._id},
+        {
+            "$pull":
+            {"cart" : {"id": req.query._id}}
+        },
+        {new : true},
+        (err, userInfo) => {
+            let cart = userInfo.cart;
+            let array = cart.map(item => {
+                return item.id
+            })
+            Book.find({ '_id': { $in: array }})
+            .populate('writer')
+            .exec((err, cartDetail) => {
+                return res.status(200).json({
+                    cartDetail,
+                    cart
+                })
+            })
+        }
+    )
+})
+/* router.get('/userCartInfo', auth, (req, res) => {
+    User.findOne(
+        {_id: req.user._id},
+        (err, userInfo) => {
+            let cart = userInfo.cart;
+            let array = cart.map(item => {
+                return item.id
+            })
+            Book.find({ '_id': { $in: array }})
+            .populate('writer')
+            .exec((err, cartDetail) => {
+                if(err) return res.status(400).send(err)
+                
+                return res.status(200).json({
+                    success: true,
+                    cartDetail,
+                    cart
+                })
+            })
+        }
+    )
+})
+*/
+router.post('/successBuy', auth, (req, res) => {
+    let history = [];
+    let transactionData = {};
+
+    //putting part of the payment data into the user collection
+    req.body.cartDetail.forEach((item) => {
+        history.push({
+            dateOfPurchase: Date.now(),
+            name: item.title,
+            id: item._id,
+            price: item.price,
+            quantity: item.quantity,
+            paymentId: req.body.paymentData.paymentID
+        })
+    })
+
+    //Putting payment information from Paypal into the Payment collection
+    transactionData.user = {
+        id: req.user._id,
+        name: req.user.name,
+        lastname: req.user.lastname,
+        email: req.user.email
+
+    }
+
+    transactionData.data = req.body.paymentData;
+    transactionData.book = history
+
+    User.findOneAndUpdate(
+        {_id: req.user._id},
+        {$push: {history: history}, $set: {cart: []}},
+        {new : true},
+        (err, user) => {
+            if(err) return res.json({ success: false, err});
+            
+            const payment = new Payment(transactionData)
+            payment.save((err, doc)=> {
+                if(err) return res.json({success: false, err})
+            
+
+            //TODO - count number of sold items for each book by payment id and book id    
+            })
+        }
+    )
+})
 
 module.exports = router;

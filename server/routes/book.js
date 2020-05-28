@@ -55,7 +55,7 @@ router.post("/getBooks", (req, res) => {
     for (let key in req.body.filters) {
 
         if (req.body.filters[key].length > 0) {
-            findArgs[key] = req.body.filters[key];
+                findArgs[key] = req.body.filters[key];
         }
     }
 
@@ -81,7 +81,7 @@ router.post("/getBooks", (req, res) => {
             .exec((err, books) => {
                 if (err) return res.status(400).json({ success: false, err })
                 res.status(200).json({ success: true, books, postSize: books.length })
-        })
+            })
     }
 });
 

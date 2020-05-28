@@ -8,6 +8,7 @@ import RegisterPage from "./views/RegisterPage/RegisterPage.js";
 import NavBar from "./views/NavBar/NavBar";
 import Footer from "./views/Footer/Footer"
 import AddBookPage from './views/AddBookPage/AddBookPage.js';
+import EditBookPage from './views/EditBookPage/EditBookPage.js';
 import ShoppingCartPage from './views/ShoppingCartPage/ShoppingCartPage.js';
 import BookDetailsPage from './views/BookDetailsPage/BookDetailsPage.js';
 
@@ -25,6 +26,7 @@ function App() {
           <Route exact path="/login" component={Auth(LoginPage, false)} />
           <Route exact path="/register" component={Auth(RegisterPage, false)} />
           <Route exact path="/book/add" component={Auth(AddBookPage, true)} />
+          <Route exact path="/book/edit" component={Auth(EditBookPage, true)}/>
           <Route exact path="/cart" component={Auth(ShoppingCartPage, true)} />
           <Route exact path="/book/:bookId" component={Auth(BookDetailsPage, null)} />
         </Switch>

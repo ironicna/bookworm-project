@@ -1,4 +1,4 @@
-const categories = [
+const genre = [
     {
         "_id": 1,
         "name": "Fiction"
@@ -6,15 +6,25 @@ const categories = [
     {
         "_id": 2,
         "name": "Non-Fiction"
-    },
+    }
+]
+
+const stateOfBook = [
+    // {
+    //     "_id": 0,
+    //     "name": "Any"
+    // },
     {
-        "_id": 3,
+        "_id": 1,
         "name": "New"
     },
     {
-        "_id": 4,
+        "_id": 2,
         "name": "Used"
-    },
+    }
 ]
 
-export { categories }
+export { 
+    genre,
+    stateOfBook 
+}

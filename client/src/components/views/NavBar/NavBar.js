@@ -15,9 +15,16 @@ function NavBar() {
     setVisible(false)
   };
 
+  var logo = (
+    <span class="logo">
+      <a href="/">
+        <img src="/logo.png" height="33" width="120" alt="logo" /></a>
+    </span>
+  );
+
   return (
     <nav className="menu" style={{ position: 'fixed', zIndex: 5, width: '100%' }}>
-      <div className="menu__logo">
+      <div className="menu__logo" >
         <a href="/" style={{color: 'gray'}}>BOOKWORM</a>
       </div>
       <div className="menu__container">
